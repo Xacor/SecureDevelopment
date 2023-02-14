@@ -8,7 +8,7 @@ Page {
     signal successLogIn()
 
     background: Rectangle {
-        color: "#ffffff"
+        color: "lightgrey"
     }
 
     Popup {
@@ -18,6 +18,9 @@ Page {
         height: 150
         modal: true
         focus: true
+        background: Rectangle {
+            color: "red"
+        }
 
         ColumnLayout {
             anchors.fill: parent

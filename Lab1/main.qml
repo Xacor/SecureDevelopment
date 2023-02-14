@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.15
 
 ApplicationWindow {
     id: root
-    width: 1280
-    height: 720
+    width: 720
+    height: 480
     visible: true
     title: qsTr("Password Manager")
 
@@ -18,7 +18,6 @@ ApplicationWindow {
 
     Login {
         id: loginPage
-        objectName: "LoginPage"
     }
 
     Index {
@@ -28,7 +27,6 @@ ApplicationWindow {
     Connections {
         target: loginPage
         function onSuccessLogIn() {
-            console.log("success")
             stack.push(index)
         }
     }
