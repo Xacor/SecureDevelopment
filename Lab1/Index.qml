@@ -4,7 +4,6 @@ import QtQuick.Controls 2.15
 Page {
     id: indexPage
     background: Rectangle {
-        anchors.fill: parrent.fill
         color: "grey"
     }
 

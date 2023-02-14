@@ -13,15 +13,25 @@ ApplicationWindow {
     StackView {
         id: stack
         anchors.fill: parent
-        initialItem: login
+        initialItem: loginPage
     }
 
     Login {
-        id: login
-        onClicked: stack.push(index)
+        id: loginPage
+        objectName: "LoginPage"
     }
 
     Index {
         id: index
     }
+
+    Connections {
+        target: loginPage
+        function onSuccessLogIn() {
+            console.log("success")
+            stack.push(index)
+        }
+    }
+
+
 }

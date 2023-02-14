@@ -4,10 +4,40 @@ import QtQuick.Controls 2.15
 
 Page {
     id: loginPage
-    signal clicked
+
+    signal successLogIn()
+
     background: Rectangle {
-        anchors.fill: parrent.fill
         color: "#ffffff"
+    }
+
+    Popup {
+        id: popup
+        anchors.centerIn: Overlay.overlay
+        width: 200
+        height: 150
+        modal: true
+        focus: true
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            Text {
+                Layout.alignment: Qt.AlignHCenter
+                font.pixelSize: 18
+                text: "Неверный пароль"
+            }
+            Button {
+                id: okButton
+                Layout.preferredWidth: 100
+                Layout.preferredHeight: 40
+                Layout.alignment: Qt.AlignHCenter
+                text: "Ok"
+                onClicked: popup.close()
+            }
+
+        }
     }
 
     ColumnLayout {
@@ -25,7 +55,6 @@ Page {
             placeholderTextColor: "grey"
             echoMode: TextInput.Password
             verticalAlignment: Text.AlignVCenter
-            anchors.horizontalCenter: parent.horizontalCenter
             font.pointSize: 12
 
             background: Rectangle {
@@ -47,10 +76,18 @@ Page {
             }
             text: qsTr("Вход")
             font.pointSize: 12
-            anchors.top: passwordField.bottom
-            anchors.topMargin: 5
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: loginPage.clicked()
+            onClicked: lm.onLogIn(passwordField.text)
+        }
+
+        Connections {
+            target: lm
+            function onPwdAccepted(ok) {
+                if (ok) {
+                    loginPage.successLogIn();
+                } else {
+                    popup.open()
+                }
+            }
         }
     }
 }
