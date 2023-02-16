@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
 
 ApplicationWindow {
@@ -9,6 +10,9 @@ ApplicationWindow {
     height: 480
     visible: true
     title: qsTr("Password Manager")
+
+    Material.theme: Material.Dark
+    Material.accent: Material.Purple
 
     StackView {
         id: stack
@@ -22,6 +26,7 @@ ApplicationWindow {
 
     Index {
         id: index
+        visible: false
     }
 
     Connections {

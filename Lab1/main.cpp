@@ -1,24 +1,31 @@
-#include <LoginManager.h>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQuickView>
 #include <QQmlContext>
-#include <QQuickItem>
+#include <QSortFilterProxyModel>
+
+#include <LoginManager.h>
+#include <AccountList.h>
+#include <AccountModel.h>
 
 int main(int argc, char *argv[])
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
     QGuiApplication app(argc, argv);
 
+    qmlRegisterType<AccountModel>("Account", 1, 0, "AccountModel");
+    qmlRegisterUncreatableType<AccountList>("Account", 1,0, "AccountList",
+        "AccountList shoud not be created in QML");
+
+
     QQmlApplicationEngine engine;
+    QQmlContext *context = engine.rootContext();
 
 
     LoginManager lm;
-
-    QQmlContext *context = engine.rootContext();
     context->setContextProperty("lm", &lm);
+
+    AccountList accountList;
+    context->setContextProperty("accountList", &accountList);
+
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
