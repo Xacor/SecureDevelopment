@@ -8,8 +8,6 @@ import Account 1.0
 Page {
     id: indexPage
 
-
-
     ColumnLayout {
         anchors.fill: parent
 
@@ -23,13 +21,9 @@ Page {
             placeholderText: qsTr("Поиск")
             font.pixelSize: 16
 
-            onDisplayTextChanged: {
-                console.log(displayText)
-                listview.delegateChanged()
-            }
+            onDisplayTextChanged: filterModel.onSearchInputChanged(displayText)
 
         }
-
 
         Rectangle {
             id: btnBlock
@@ -64,16 +58,13 @@ Page {
             height: parent.height
             ScrollBar.vertical: ScrollBar { }
 
-            model: AccountModel {
-                list: accountList
-            }
+            model: filterModel
 
             delegate: Rectangle {
-
+                id: delegateRect
                 width: listview.width
                 height: 50
                 color: Material.background
-
                 RowLayout {
                     width: listview.width
 

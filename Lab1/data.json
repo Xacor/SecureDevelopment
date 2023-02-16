@@ -1,0 +1,12 @@
+[
+  {
+    "site": "vk.com",
+    "username": "admin",
+    "password": "password"
+  },
+  {
+    "site": "google.com",
+    "username": "noname",
+    "password": "qwerty"
+  }
+]

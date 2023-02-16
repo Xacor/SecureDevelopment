@@ -17,7 +17,7 @@ public slots:
     void onLogIn(QString password);
 
 private:
-    const QString password = "qwerty";
+    const QString mPassword = "qwerty";
 };
 
 

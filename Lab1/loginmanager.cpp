@@ -1,12 +1,11 @@
 #include "loginmanager.h"
-#include "qdebug.h"
 
 LoginManager::LoginManager(QObject *parent) : QObject(parent)
 {
 }
 
 bool LoginManager::CheckPassword(QString password) {
-    return this->password == password;
+    return this->mPassword == password;
 }
 
 void LoginManager::onLogIn(QString password) {

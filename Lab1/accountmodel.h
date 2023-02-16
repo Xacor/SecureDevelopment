@@ -4,6 +4,10 @@
 #include <QAbstractListModel>
 #include <accountlist.h>
 
+// Представление данных.
+// Несмотря на название, это класс отвечает только за рендер списка.
+// Вся логика добавления, удаления, изменения реализована в <accountlist.h>
+// https://doc.qt.io/qt-6/model-view-programming.html
 class AccountModel : public QAbstractListModel
 {
     Q_OBJECT
