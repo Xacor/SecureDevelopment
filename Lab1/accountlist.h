@@ -22,8 +22,8 @@ public:
     QVector<AccountItem> items() const;
     bool setItemAt(int index, const AccountItem &item);
 
-    void read(const QString *filepath);
-    void write(QJsonDocument &json) const;
+    void load();
+    void save() const;
 
 signals:
     void preItemAppended();
@@ -38,6 +38,7 @@ public slots:
 
 private:
     QVector<AccountItem> mItems;
+    const QString *mFilepath;
 };
 
 #endif // ACCOUNTLIST_H

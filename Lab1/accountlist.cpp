@@ -11,7 +11,8 @@ AccountList::AccountList(QObject *parent): QObject{parent}
 
 AccountList::AccountList(QString *filepath)
 {
-    this->read(filepath);
+    this->mFilepath = filepath;
+    this->load();
 }
 
 QVector<AccountItem> AccountList::items() const
@@ -32,9 +33,9 @@ bool AccountList::setItemAt(int index, const AccountItem &item)
     return true;
 }
 
-void AccountList::read(const QString *filepath)
+void AccountList::load()
 {
-    QFile file(*filepath);
+    QFile file(*this->mFilepath);
     if(!file.open(QIODevice::ReadOnly)){
         qDebug()<<"Failed to open" ;
         return;
