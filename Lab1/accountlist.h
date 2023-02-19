@@ -1,8 +1,10 @@
 #ifndef ACCOUNTLIST_H
 #define ACCOUNTLIST_H
 
+#include <QFile>
 #include <QObject>
 #include <QVector>
+#include <QTextStream>
 
 struct AccountItem {
     QString site;
@@ -17,13 +19,17 @@ class AccountList : public QObject
     Q_OBJECT
 public:
     explicit AccountList(QObject *parent = nullptr);
-    AccountList(QString *filepath);
+    AccountList(QString filePath);
 
     QVector<AccountItem> items() const;
     bool setItemAt(int index, const AccountItem &item);
 
-    void load();
-    void save() const;
+    bool load();
+    bool save();
+
+    QString decrypt();
+    void encrypt(QString pText);
+    void appendItem(AccountItem item, bool save);
 
 signals:
     void preItemAppended();
@@ -33,12 +39,13 @@ signals:
     void postItemRemoved();
 
 public slots:
-    void appendItem();
+    void appendItem(QString site, QString username, QString password);
     void removeItem();
+    void onPwdChecked(bool ok);
 
 private:
     QVector<AccountItem> mItems;
-    const QString *mFilepath;
+    QFile mFile;
 };
 
 #endif // ACCOUNTLIST_H

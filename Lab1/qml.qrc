@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>Login.qml</file>
         <file>Index.qml</file>
+        <file>Form.qml</file>
     </qresource>
 </RCC>

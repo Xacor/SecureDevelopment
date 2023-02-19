@@ -9,10 +9,9 @@ AccountList::AccountList(QObject *parent): QObject{parent}
 
 }
 
-AccountList::AccountList(QString *filepath)
+AccountList::AccountList(QString filePath) : mFile(filePath)
 {
-    this->mFilepath = filepath;
-    this->load();
+
 }
 
 QVector<AccountItem> AccountList::items() const
@@ -33,32 +32,36 @@ bool AccountList::setItemAt(int index, const AccountItem &item)
     return true;
 }
 
-void AccountList::load()
+bool AccountList::load()
 {
-    QFile file(*this->mFilepath);
-    if(!file.open(QIODevice::ReadOnly)){
-        qDebug()<<"Failed to open" ;
-        return;
-    }
 
-    QTextStream fileText(&file);
-    QString jsonString = fileText.readAll();
-    file.close();
+    //Возможно стоит читать построчно для экономии памяти
+    if(!this->mFile.open(QIODevice::ReadOnly)){
+        qDebug()<<"Failed to open";
+        return false;
+    }
+    QTextStream textStream(&this->mFile);
+    QString jsonString = textStream.readAll();
+    this->mFile.close();
+
+    qDebug() << jsonString;
 
     QByteArray jsonBytes = jsonString.toLocal8Bit();
     QJsonDocument json =QJsonDocument::fromJson(jsonBytes);
 
     if (!json.isArray()) {
         qDebug() << "JSON is not array";
-        return;
+        return false;
     }
 
     QJsonArray jsonArray = json.array();
 
     if  (jsonArray.isEmpty()) {
         qDebug() << "Array is empty";
-        return;
+        return false;
     }
+
+    this->mItems.clear();
 
     for (int i = 0; i < jsonArray.count(); i++) {
         if (!jsonArray.at(i).isObject()) {
@@ -79,18 +82,57 @@ void AccountList::load()
         if (object.contains("password") && object["password"].isString())
             item.password = object["password"].toString();
 
-        this->mItems.append(item);
 
+        this->appendItem(item, false);
     }
-
+    return true;
 }
 
-void AccountList::appendItem()
+bool AccountList::save()
+{
+
+    QJsonArray jsonArray;
+
+    for (int i = 0; i < this->mItems.count(); i++) {
+        QJsonObject itemObject;
+        itemObject["site"] = this->mItems.at(i).site;
+        itemObject["username"] = this->mItems.at(i).username;
+        itemObject["password"] = this->mItems.at(i).password;
+        jsonArray.append(itemObject);
+    }
+
+    QJsonDocument jsonDoc(jsonArray);
+
+    if(!this->mFile.open(QIODevice::WriteOnly)){
+        qDebug()<<"Failed to open on write";
+        return false;
+    }
+    this->mFile.write(jsonDoc.toJson());
+    this->mFile.close();
+    return true;
+}
+
+void AccountList::appendItem(QString site, QString username, QString password)
 {
     emit preItemAppended();
 
     AccountItem item;
+    item.site = site;
+    item.username = username;
+    item.password = password;
     mItems.append(item);
+    this->save();
+
+    emit postItemAppended();
+}
+
+void AccountList::appendItem(AccountItem item, bool save)
+{
+    emit preItemAppended();
+
+    mItems.append(item);
+    if (save)
+        this->save();
 
     emit postItemAppended();
 }
@@ -102,10 +144,18 @@ void AccountList::removeItem()
             emit preItemRemoved(i);
 
             mItems.removeAt(i);
+            this->save();
 
             emit postItemRemoved();
         } else {
             ++i;
         }
     }
+}
+
+void AccountList::onPwdChecked(bool ok)
+{
+    if (ok)
+        this->load();
+
 }

@@ -28,13 +28,13 @@ int main(int argc, char *argv[])
     LoginManager lm;
     context->setContextProperty("lm", &lm);
 
+    // Отерытие файла
     QString filepath = QCoreApplication::applicationDirPath() + "/data.json";
-    AccountList accountList(&filepath);
+    AccountList accountList(filepath);
     context->setContextProperty("accountList", &accountList);
 
-    // QCoreApplication::applicationDirPath() + "/data.json"
-
-
+    QObject::connect(&lm, &LoginManager::pwdChecked,
+                       &accountList, &AccountList::onPwdChecked);
 
     AccountModel am;
     am.setlist(&accountList);

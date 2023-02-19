@@ -24,16 +24,38 @@ ApplicationWindow {
         id: loginPage
     }
 
+    Form {
+        id: form
+        visible: false
+    }
+
     Index {
         id: index
         visible: false
     }
+
 
     Connections {
         target: loginPage
         function onSuccessLogIn() {
             stack.push(index)
         }
+
+    }
+
+    Connections {
+        target: form
+        function onAccountCreated() {
+            stack.pop()
+        }
+
+    }
+    Connections {
+        target: index
+        function onAddBtnClicked() {
+            stack.push(form)
+        }
+
     }
 
 

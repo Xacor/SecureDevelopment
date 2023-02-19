@@ -10,5 +10,5 @@ bool LoginManager::CheckPassword(QString password) {
 
 void LoginManager::onLogIn(QString password) {
     bool ok = this->CheckPassword(password);
-    emit pwdAccepted(ok);
+    emit pwdChecked(ok);
 }

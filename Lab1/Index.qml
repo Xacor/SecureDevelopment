@@ -7,7 +7,7 @@ import Account 1.0
 
 Page {
     id: indexPage
-
+    signal addBtnClicked
     ColumnLayout {
         anchors.fill: parent
 
@@ -36,7 +36,7 @@ Page {
                 id: addBtn
                 text: qsTr("Добавить")
                 height: parent.height
-                onClicked: accountList.appendItem()
+                onClicked: {indexPage.addBtnClicked()}
             }
 
             Button {

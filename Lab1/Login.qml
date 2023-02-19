@@ -66,7 +66,7 @@ Page {
 
         Connections {
             target: lm
-            function onPwdAccepted(ok) {
+            function onPwdChecked(ok) {
                 if (ok) {
                     loginPage.successLogIn();
                 } else {

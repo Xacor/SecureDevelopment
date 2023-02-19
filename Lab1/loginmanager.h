@@ -11,7 +11,7 @@ public:
     bool CheckPassword(QString password);
 
 signals:
-    void pwdAccepted(bool ok);
+    void pwdChecked(bool ok);
 
 public slots:
     void onLogIn(QString password);
