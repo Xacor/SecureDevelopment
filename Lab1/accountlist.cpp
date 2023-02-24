@@ -1,4 +1,4 @@
-#include "accountlist.h"
+#include <accountlist.h>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -44,7 +44,7 @@ bool AccountList::load()
     QString jsonString = textStream.readAll();
     this->mFile.close();
 
-    qDebug() << jsonString;
+    // qDebug() << jsonString;
 
     QByteArray jsonBytes = jsonString.toLocal8Bit();
     QJsonDocument json =QJsonDocument::fromJson(jsonBytes);
@@ -112,7 +112,7 @@ bool AccountList::save()
     return true;
 }
 
-void AccountList::appendItem(QString site, QString username, QString password)
+void AccountList::onAccountCreated(QString site, QString username, QString password)
 {
     emit preItemAppended();
 

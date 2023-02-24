@@ -7,6 +7,7 @@ Page {
     id: loginPage
 
     signal successLogIn()
+    signal login(string password)
 
     Popup {
         id: popup
@@ -61,7 +62,7 @@ Page {
             Layout.preferredHeight: 40
             text: qsTr("Вход")
             font.pointSize: 12
-            onClicked: lm.onLogIn(passwordField.text)
+            onClicked: loginPage.login(passwordField.text)
         }
 
         Connections {
@@ -69,9 +70,9 @@ Page {
             function onPwdChecked(ok) {
                 if (ok) {
                     loginPage.successLogIn();
-                } else {
-                    popup.open()
+                    return;
                 }
+                popup.open()
             }
         }
     }

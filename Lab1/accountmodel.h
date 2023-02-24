@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include <accountlist.h>
+#include <QCryptographicHash>
 
 // Представление данных.
 // Несмотря на название, это класс отвечает только за рендер списка.
@@ -11,7 +12,7 @@
 class AccountModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(AccountList *list READ list WRITE setlist /*NOTIFY listChanged*/)
+    Q_PROPERTY(AccountList *list READ list WRITE setlist)
 public:
     explicit AccountModel(QObject *parent = nullptr);
 

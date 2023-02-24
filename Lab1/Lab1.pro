@@ -8,6 +8,7 @@ SOURCES += \
         accountfilterproxymodel.cpp \
         accountlist.cpp \
         accountmodel.cpp \
+        crypto.cpp \
         loginmanager.cpp \
         main.cpp
 
@@ -28,7 +29,8 @@ HEADERS += \
     accountfilterproxymodel.h \
     accountlist.h \
     accountmodel.h \
+    crypto.h \
     loginmanager.h
 
 DISTFILES += \
-    data.json
+    ../build-Lab1-MVC2022-Debug/debug/data.json

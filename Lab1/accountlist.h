@@ -27,8 +27,8 @@ public:
     bool load();
     bool save();
 
-    QString decrypt();
-    void encrypt(QString pText);
+    QString decrypt(QString cText);
+    QString encrypt(QString pText);
     void appendItem(AccountItem item, bool save);
 
 signals:
@@ -39,7 +39,7 @@ signals:
     void postItemRemoved();
 
 public slots:
-    void appendItem(QString site, QString username, QString password);
+    void onAccountCreated(QString site, QString username, QString password);
     void removeItem();
     void onPwdChecked(bool ok);
 

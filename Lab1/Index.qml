@@ -3,11 +3,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
 
-import Account 1.0
-
 Page {
     id: indexPage
+
     signal addBtnClicked
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -17,10 +17,8 @@ Page {
             Layout.fillWidth: true
             Layout.preferredHeight: 40
             padding: 5
-
             placeholderText: qsTr("Поиск")
             font.pixelSize: 16
-
             onDisplayTextChanged: filterModel.onSearchInputChanged(displayText)
 
         }
@@ -30,7 +28,6 @@ Page {
 
             Layout.fillWidth: true
             Layout.preferredHeight: 50
-
             color: Material.backgroundColor
             Button {
                 id: addBtn
@@ -44,16 +41,16 @@ Page {
                 text: qsTr("Удалить")
                 height: parent.height
                 anchors.left: addBtn.right
-
                 onClicked: accountList.removeItem()
             }
         }
 
         ListView {
+            id: listview
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: 5
-            id: listview
             width: parent.width
             height: parent.height
             ScrollBar.vertical: ScrollBar { }
@@ -68,7 +65,6 @@ Page {
                 RowLayout {
                     width: listview.width
 
-
                     Label {
                         id: site
                         text: model.site
@@ -80,8 +76,7 @@ Page {
                     }
                     Label {
                         id: username
-                        text:
-                            qsTr("•").repeat(model.username.length)
+                        text: qsTr("•").repeat(model.username.length)
                         font.pixelSize: 26
 
                         verticalAlignment: Text.AlignVCenter

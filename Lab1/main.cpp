@@ -16,11 +16,6 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-//    qmlRegisterType<AccountModel>("Account", 1, 0, "AccountModel");
-    qmlRegisterUncreatableType<AccountList>("Account", 1,0, "AccountList",
-        "AccountList shoud not be created in QML");
-
-
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
 
@@ -33,8 +28,7 @@ int main(int argc, char *argv[])
     AccountList accountList(filepath);
     context->setContextProperty("accountList", &accountList);
 
-    QObject::connect(&lm, &LoginManager::pwdChecked,
-                       &accountList, &AccountList::onPwdChecked);
+    QObject::connect(&lm, &LoginManager::pwdChecked, &accountList, &AccountList::onPwdChecked);
 
     AccountModel am;
     am.setlist(&accountList);
@@ -52,6 +46,12 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     engine.load(url);
+
+    QObject *loginPage = engine.rootObjects().constFirst()->children().at(2);
+    QObject::connect(loginPage, SIGNAL(login(QString)), &lm, SLOT(onLogIn(QString)));
+
+    QObject *formPage = engine.rootObjects().constFirst()->children().at(3);
+    QObject::connect(formPage, SIGNAL(accountCreated(QString,QString,QString)), &accountList, SLOT(onAccountCreated(QString,QString,QString)));
 
     return app.exec();
 }

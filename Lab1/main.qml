@@ -11,6 +11,8 @@ ApplicationWindow {
     visible: true
     title: qsTr("Password Manager")
 
+
+
     Material.theme: Material.Dark
     Material.accent: Material.Purple
 
@@ -44,13 +46,6 @@ ApplicationWindow {
     }
 
     Connections {
-        target: form
-        function onAccountCreated() {
-            stack.pop()
-        }
-
-    }
-    Connections {
         target: index
         function onAddBtnClicked() {
             stack.push(form)
@@ -58,5 +53,11 @@ ApplicationWindow {
 
     }
 
+    Connections {
+        target: form
+        function onAccountCreated() {
+            stack.pop()
+        }
 
+    }
 }
