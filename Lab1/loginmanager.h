@@ -8,16 +8,18 @@ class LoginManager : public QObject
     Q_OBJECT
 public:
     explicit LoginManager(QObject *parent = 0);
-    bool CheckPassword(QString password);
+    LoginManager(QString &file_path);
+    bool CheckPassword(QByteArray &key);
 
 signals:
     void pwdChecked(bool ok);
+    void keyGenerated(QByteArray key);
 
 public slots:
     void onLogIn(QString password);
 
 private:
-    const QString mPassword = "qwerty";
+    QString file_path;
 };
 
 

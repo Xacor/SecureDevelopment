@@ -3,65 +3,62 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <CryptoController.h>
 
 AccountList::AccountList(QObject *parent): QObject{parent}
 {
 
 }
 
-AccountList::AccountList(QString filePath) : mFile(filePath)
+AccountList::AccountList(QString file_path) : file_path(file_path)
 {
 
 }
 
 QVector<AccountItem> AccountList::items() const
 {
-    return mItems;
+    return m_items;
 }
 
 bool AccountList::setItemAt(int index, const AccountItem &item)
 {
-    if (index < 0 || index >= mItems.size())
+    if (index < 0 || index >= m_items.size())
         return false;
 
-    const AccountItem &oldItem = mItems.at(index);
+    const AccountItem &oldItem = m_items.at(index);
     if (item.site == oldItem.site && item.username == oldItem.username && item.password == oldItem.password && item.deleted == oldItem.deleted)
         return false;
 
-    mItems[index] = item;
+    m_items[index] = item;
     return true;
 }
 
 bool AccountList::load()
 {
+    QByteArray jsonBytes;
+    CryptoController::DecryptFile(this->key, this->file_path, jsonBytes);
 
-    //Возможно стоит читать построчно для экономии памяти
-    if(!this->mFile.open(QIODevice::ReadOnly)){
-        qDebug()<<"Failed to open";
+    QJsonParseError err;
+    QJsonDocument json_doc = QJsonDocument::fromJson(jsonBytes, &err);
+
+    if (json_doc.isNull()) {
+        qDebug() <<"Error when parsing JSON:" <<err.errorString();
         return false;
     }
-    QTextStream textStream(&this->mFile);
-    QString jsonString = textStream.readAll();
-    this->mFile.close();
 
-    // qDebug() << jsonString;
-
-    QByteArray jsonBytes = jsonString.toLocal8Bit();
-    QJsonDocument json =QJsonDocument::fromJson(jsonBytes);
-
-    if (!json.isArray()) {
+    if (!json_doc.isArray()) {
         qDebug() << "JSON is not array";
         return false;
     }
 
-    QJsonArray jsonArray = json.array();
+    QJsonArray jsonArray = json_doc.array();
 
     if  (jsonArray.isEmpty()) {
         qDebug() << "Array is empty";
         return false;
     }
 
-    this->mItems.clear();
+    this->m_items.clear();
 
     for (int i = 0; i < jsonArray.count(); i++) {
         if (!jsonArray.at(i).isObject()) {
@@ -93,22 +90,22 @@ bool AccountList::save()
 
     QJsonArray jsonArray;
 
-    for (int i = 0; i < this->mItems.count(); i++) {
+    for (int i = 0; i < this->m_items.count(); i++) {
         QJsonObject itemObject;
-        itemObject["site"] = this->mItems.at(i).site;
-        itemObject["username"] = this->mItems.at(i).username;
-        itemObject["password"] = this->mItems.at(i).password;
+        itemObject["site"] = this->m_items.at(i).site;
+        itemObject["username"] = this->m_items.at(i).username;
+        itemObject["password"] = this->m_items.at(i).password;
         jsonArray.append(itemObject);
     }
 
     QJsonDocument jsonDoc(jsonArray);
 
-    if(!this->mFile.open(QIODevice::WriteOnly)){
-        qDebug()<<"Failed to open on write";
-        return false;
-    }
-    this->mFile.write(jsonDoc.toJson());
-    this->mFile.close();
+//    if(!this->mFile.open(QIODevice::WriteOnly)){
+//        qDebug()<<"Failed to open on write";
+//        return false;
+//    }
+//    this->mFile.write(jsonDoc.toJson());
+//    this->mFile.close();
     return true;
 }
 
@@ -120,7 +117,7 @@ void AccountList::onAccountCreated(QString site, QString username, QString passw
     item.site = site;
     item.username = username;
     item.password = password;
-    mItems.append(item);
+    m_items.append(item);
     this->save();
 
     emit postItemAppended();
@@ -130,7 +127,7 @@ void AccountList::appendItem(AccountItem item, bool save)
 {
     emit preItemAppended();
 
-    mItems.append(item);
+    m_items.append(item);
     if (save)
         this->save();
 
@@ -139,11 +136,11 @@ void AccountList::appendItem(AccountItem item, bool save)
 
 void AccountList::removeItem()
 {
-    for (int i = 0; i < mItems.size();) {
-        if (mItems.at(i).deleted) {
+    for (int i = 0; i < m_items.size();) {
+        if (m_items.at(i).deleted) {
             emit preItemRemoved(i);
 
-            mItems.removeAt(i);
+            m_items.removeAt(i);
             this->save();
 
             emit postItemRemoved();
@@ -153,9 +150,8 @@ void AccountList::removeItem()
     }
 }
 
-void AccountList::onPwdChecked(bool ok)
+void AccountList::onKeyGenerated(QByteArray key)
 {
-    if (ok)
-        this->load();
-
+    this->key = key;
+    this->load();
 }

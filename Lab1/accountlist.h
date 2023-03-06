@@ -13,6 +13,7 @@ struct AccountItem {
     bool deleted = false;
 };
 
+
 // Модель данных
 class AccountList : public QObject
 {
@@ -41,11 +42,12 @@ signals:
 public slots:
     void onAccountCreated(QString site, QString username, QString password);
     void removeItem();
-    void onPwdChecked(bool ok);
+    void onKeyGenerated(QByteArray key);
 
 private:
-    QVector<AccountItem> mItems;
-    QFile mFile;
+    QVector<AccountItem> m_items;
+    QString file_path;
+    QByteArray key;
 };
 
 #endif // ACCOUNTLIST_H

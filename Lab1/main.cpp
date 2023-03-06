@@ -11,7 +11,7 @@
 #include <QJsonDocument>
 #include <QDir>
 #include <qDebug>
-#include <cryptocontroller.h>
+#include <CryptoController.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,15 +21,14 @@ int main(int argc, char *argv[])
     QQmlContext *context = engine.rootContext();
 
     // Ниже происходит объявление объектов и проброс их в QML
-    LoginManager lm;
-    context->setContextProperty("lm", &lm);
-
-    // Отерытие файла
     QString filepath = QCoreApplication::applicationDirPath() + "/data.json";
     AccountList accountList(filepath);
     context->setContextProperty("accountList", &accountList);
 
-    QObject::connect(&lm, &LoginManager::pwdChecked, &accountList, &AccountList::onPwdChecked);
+    LoginManager lm(filepath);
+    context->setContextProperty("lm", &lm);
+
+    QObject::connect(&lm, &LoginManager::keyGenerated, &accountList, &AccountList::onKeyGenerated);
 
     AccountModel am;
     am.setlist(&accountList);
@@ -53,11 +52,6 @@ int main(int argc, char *argv[])
     QObject *formPage = engine.rootObjects().constFirst()->children().at(3);
     QObject::connect(formPage, SIGNAL(accountCreated(QString,QString,QString)), &accountList, SLOT(onAccountCreated(QString,QString,QString)));
 
-    QString filepath_encoded = QCoreApplication::applicationDirPath() + "/data_encoded.json";
-
-    QByteArray key = CryptoController::GenerateKey("qwerty");
-    QByteArray buff;
-    CryptoController::DecryptFile(key, filepath_encoded, buff);
 
     return app.exec();
 }

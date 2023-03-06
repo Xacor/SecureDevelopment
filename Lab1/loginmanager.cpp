@@ -5,12 +5,24 @@ LoginManager::LoginManager(QObject *parent) : QObject(parent)
 {
 }
 
-bool LoginManager::CheckPassword(QString password) {
-    return this->mPassword == password;
+LoginManager::LoginManager(QString &file_path)
+{
+    this->file_path = file_path;
+}
+
+bool LoginManager::CheckPassword(QByteArray &key) {
+    QByteArray *buff = new QByteArray;
+
+    bool ok = CryptoController::DecryptFile(key, this->file_path, *buff);
+
+    delete buff;
+    return ok;
 }
 
 void LoginManager::onLogIn(QString password) {
-    bool ok = this->CheckPassword(password);
-    CryptoController::GenerateKey(password.toUtf8());
+    QByteArray key = CryptoController::GenerateKey(password.toUtf8());
+    bool ok = this->CheckPassword(key);
     emit pwdChecked(ok);
+
+    if (ok) emit keyGenerated(key);
 }

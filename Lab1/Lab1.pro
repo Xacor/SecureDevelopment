@@ -33,7 +33,8 @@ HEADERS += \
     loginmanager.h
 
 DISTFILES += \
-    ../build-Lab1-MVC2022-Debug/debug/data.json
+    ../build-Lab1-MVC2022-Debug/debug/data.json \
+    data.json
 
 LIBS += -LC:/Qt/Tools/OpenSSL/Win_x64/lib/ -llibcrypto
 
