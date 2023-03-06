@@ -3,7 +3,6 @@
 
 #include <QAbstractListModel>
 #include <accountlist.h>
-#include <QCryptographicHash>
 
 // Представление данных.
 // Несмотря на название, это класс отвечает только за рендер списка.

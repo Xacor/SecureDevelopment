@@ -8,7 +8,7 @@ SOURCES += \
         accountfilterproxymodel.cpp \
         accountlist.cpp \
         accountmodel.cpp \
-        crypto.cpp \
+        cryptocontroller.cpp \
         loginmanager.cpp \
         main.cpp
 
@@ -29,8 +29,13 @@ HEADERS += \
     accountfilterproxymodel.h \
     accountlist.h \
     accountmodel.h \
-    crypto.h \
+    cryptocontroller.h \
     loginmanager.h
 
 DISTFILES += \
     ../build-Lab1-MVC2022-Debug/debug/data.json
+
+LIBS += -LC:/Qt/Tools/OpenSSL/Win_x64/lib/ -llibcrypto
+
+INCLUDEPATH += C:/Qt/Tools/OpenSSL/Win_x64/include
+DEPENDPATH += C:/Qt/Tools/OpenSSL/Win_x64/include

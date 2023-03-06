@@ -1,5 +1,4 @@
 #include "accountmodel.h"
-#include "accountlist.h"
 
 AccountModel::AccountModel(QObject *parent)
     : QAbstractListModel(parent)

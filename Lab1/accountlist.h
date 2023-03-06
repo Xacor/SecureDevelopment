@@ -27,8 +27,8 @@ public:
     bool load();
     bool save();
 
-    QString decrypt(QString cText);
-    QString encrypt(QString pText);
+//    QString decrypt(QString cText);
+//    QString encrypt(QString pText);
     void appendItem(AccountItem item, bool save);
 
 signals:

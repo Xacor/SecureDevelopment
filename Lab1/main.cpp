@@ -11,6 +11,7 @@
 #include <QJsonDocument>
 #include <QDir>
 #include <qDebug>
+#include <cryptocontroller.h>
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +38,6 @@ int main(int argc, char *argv[])
     AccountFilterProxyModel proxyModel(&am, am.siteRole);
     context->setContextProperty("filterModel", &proxyModel);
 
-
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
@@ -52,6 +52,12 @@ int main(int argc, char *argv[])
 
     QObject *formPage = engine.rootObjects().constFirst()->children().at(3);
     QObject::connect(formPage, SIGNAL(accountCreated(QString,QString,QString)), &accountList, SLOT(onAccountCreated(QString,QString,QString)));
+
+    QString filepath_encoded = QCoreApplication::applicationDirPath() + "/data_encoded.json";
+
+    QByteArray key = CryptoController::GenerateKey("qwerty");
+    QByteArray buff;
+    CryptoController::DecryptFile(key, filepath_encoded, buff);
 
     return app.exec();
 }
