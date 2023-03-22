@@ -17,8 +17,7 @@ public:
 
     enum {
         siteRole,
-        usernameRole,
-        passwordRole,
+        credentialsRole,
         deletedRole
     };
 

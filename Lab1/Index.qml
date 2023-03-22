@@ -7,6 +7,7 @@ Page {
     id: indexPage
 
     signal addBtnClicked
+    signal copyToClipboard(id: int, role: int)
 
     ColumnLayout {
         anchors.fill: parent
@@ -74,23 +75,33 @@ Page {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                     }
-                    Label {
+                    Button {
                         id: username
-                        text: qsTr("•").repeat(model.username.length)
+                        text: qsTr("•").repeat(Math.floor(Math.random() * 10) + 1)
                         font.pixelSize: 26
-
-                        verticalAlignment: Text.AlignVCenter
+                        background: Pane
                         Layout.fillHeight: true
                         Layout.preferredWidth: parent.width * 0.3
+
+                        ToolTip.timeout: 2500
+                        onClicked: function(){
+                            ToolTip.show(qsTr("Логин скопирован в буфер обмена"))
+                            indexPage.copyToClipboard(model.row, 1)
+                        }
                     }
-                    Label  {
+                    Button  {
                         id: password
-                        text: qsTr("•").repeat(model.password.length)
+                        text: qsTr("•").repeat(Math.floor(Math.random() * 10) + 6)
                         font.pixelSize: 26
-
-                        verticalAlignment: Text.AlignVCenter
+                        background: Pane
                         Layout.fillHeight: true
                         Layout.preferredWidth: parent.width * 0.3
+
+                        ToolTip.timeout: 2500
+                        onClicked:  function(){
+                            ToolTip.show(qsTr("Пароль скопирован в буфер обмена"))
+                            indexPage.copyToClipboard(model.row, 2)
+                        }
                     }
                     CheckBox {
                         checked: model.deleted

@@ -25,10 +25,8 @@ QVariant AccountModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case siteRole:
         return QVariant(item.site);
-    case usernameRole:
-        return QVariant(item.username);
-    case passwordRole:
-        return QVariant(item.password);
+    case credentialsRole:
+        return QVariant(item.credentials);
     case deletedRole:
         return QVariant(item.deleted);
     }
@@ -46,11 +44,8 @@ bool AccountModel::setData(const QModelIndex &index, const QVariant &value, int 
     case siteRole:
         item.site = value.toString();
         break;
-    case usernameRole:
-        item.username = value.toString();
-        break;
-    case passwordRole:
-        item.password = value.toString();
+    case credentialsRole:
+        item.credentials = value.toString().toUtf8();
         break;
     case deletedRole:
         item.deleted = value.toBool();
@@ -76,8 +71,7 @@ QHash<int, QByteArray> AccountModel::roleNames() const
 {
     QHash<int, QByteArray> names;
     names[siteRole] = "site";
-    names[usernameRole] = "username";
-    names[passwordRole] = "password";
+    names[credentialsRole] = "credentials";
     names[deletedRole] = "deleted";
 
     return names;

@@ -1,6 +1,8 @@
 #include "loginmanager.h"
 #include "cryptocontroller.h"
 
+#include <QFile>
+
 LoginManager::LoginManager(QObject *parent) : QObject(parent)
 {
 }
@@ -11,8 +13,14 @@ LoginManager::LoginManager(QString &file_path)
 }
 
 bool LoginManager::CheckPassword(QByteArray &key) {
-    QByteArray *buff = new QByteArray;
+    QFile file(this->file_path);
+    // Создать файл, если его нет
+    if (file.open(QFile::NewOnly)) {
+        file.close();
+        return true;
+    }
 
+    QByteArray *buff = new QByteArray;
     bool ok = CryptoController::DecryptFile(key, this->file_path, *buff);
 
     delete buff;

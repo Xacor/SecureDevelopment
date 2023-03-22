@@ -5,11 +5,14 @@
 #include <QObject>
 #include <QVector>
 #include <QTextStream>
+struct Credentials {
+    QString username;
+    QString password;
+};
 
 struct AccountItem {
     QString site;
-    QString username;
-    QString password;
+    QByteArray credentials;
     bool deleted = false;
 };
 
@@ -30,7 +33,7 @@ public:
 
 //    QString decrypt(QString cText);
 //    QString encrypt(QString pText);
-    void appendItem(AccountItem item, bool save);
+    void appendItem(AccountItem item);
 
 signals:
     void preItemAppended();
@@ -43,6 +46,7 @@ public slots:
     void onAccountCreated(QString site, QString username, QString password);
     void removeItem();
     void onKeyGenerated(QByteArray key);
+    void onCopyToClipboard(int id, int role);
 
 private:
     QVector<AccountItem> m_items;

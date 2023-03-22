@@ -14,6 +14,9 @@ public:
     static bool DecryptFile(const QByteArray &key, const QString &file_path, QByteArray &buffer);
     static bool EncryptFile(const QByteArray &key, const QString &file_path, const QByteArray &json);
 
+    static bool DecryptCredentials(const QByteArray &key,const QByteArray &in, QByteArray &out);
+    static bool EncryptCredentials(const QByteArray &key, const QByteArray &in, QByteArray &out);
+
     constexpr static unsigned char m_iv[17] = "4c48129675f9eff3";
 };
 

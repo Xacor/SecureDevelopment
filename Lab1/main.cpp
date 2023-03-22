@@ -52,6 +52,9 @@ int main(int argc, char *argv[])
     QObject *formPage = engine.rootObjects().constFirst()->children().at(3);
     QObject::connect(formPage, SIGNAL(accountCreated(QString,QString,QString)), &accountList, SLOT(onAccountCreated(QString,QString,QString)));
 
+    QObject *indexPage = engine.rootObjects().constFirst()->children().at(4);
+    QObject::connect(indexPage, SIGNAL(copyToClipboard(int,int)), &accountList, SLOT(onCopyToClipboard(int,int)));
+
 
     return app.exec();
 }

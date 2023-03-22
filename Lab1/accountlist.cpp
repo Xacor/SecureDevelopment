@@ -1,9 +1,12 @@
+#include "qguiapplication.h"
 #include <accountlist.h>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <CryptoController.h>
+#include <QClipboard>
+#include <QTimer>
 
 AccountList::AccountList(QObject *parent): QObject{parent}
 {
@@ -26,7 +29,7 @@ bool AccountList::setItemAt(int index, const AccountItem &item)
         return false;
 
     const AccountItem &oldItem = m_items.at(index);
-    if (item.site == oldItem.site && item.username == oldItem.username && item.password == oldItem.password && item.deleted == oldItem.deleted)
+    if (item.site == oldItem.site && item.credentials == oldItem.credentials && item.deleted == oldItem.deleted)
         return false;
 
     m_items[index] = item;
@@ -37,7 +40,6 @@ bool AccountList::load()
 {
     QByteArray jsonBytes;
     CryptoController::DecryptFile(this->key, this->file_path, jsonBytes);
-
     QJsonParseError err;
     QJsonDocument json_doc = QJsonDocument::fromJson(jsonBytes, &err);
 
@@ -52,11 +54,6 @@ bool AccountList::load()
     }
 
     QJsonArray jsonArray = json_doc.array();
-
-    if  (jsonArray.isEmpty()) {
-        qDebug() << "Array is empty";
-        return false;
-    }
 
     this->m_items.clear();
 
@@ -73,15 +70,13 @@ bool AccountList::load()
         if (object.contains("site") && object["site"].isString())
             item.site = object["site"].toString();
 
-        if (object.contains("username") && object["username"].isString())
-            item.username = object["username"].toString();
+        if (object.contains("credentials") && object["credentials"].isString())
+            item.credentials = object["credentials"].toString().toUtf8();
 
-        if (object.contains("password") && object["password"].isString())
-            item.password = object["password"].toString();
-
-
-        this->appendItem(item, false);
+        this->appendItem(item);
     }
+
+
     return true;
 }
 
@@ -93,20 +88,15 @@ bool AccountList::save()
     for (int i = 0; i < this->m_items.count(); i++) {
         QJsonObject itemObject;
         itemObject["site"] = this->m_items.at(i).site;
-        itemObject["username"] = this->m_items.at(i).username;
-        itemObject["password"] = this->m_items.at(i).password;
+        itemObject["credentials"] = QString(this->m_items.at(i).credentials);
         jsonArray.append(itemObject);
     }
 
     QJsonDocument jsonDoc(jsonArray);
+    QByteArray jsonBytes = jsonDoc.toJson();
+    bool ok = CryptoController::EncryptFile(this->key, this->file_path, jsonBytes);
 
-//    if(!this->mFile.open(QIODevice::WriteOnly)){
-//        qDebug()<<"Failed to open on write";
-//        return false;
-//    }
-//    this->mFile.write(jsonDoc.toJson());
-//    this->mFile.close();
-    return true;
+    return ok;
 }
 
 void AccountList::onAccountCreated(QString site, QString username, QString password)
@@ -115,21 +105,30 @@ void AccountList::onAccountCreated(QString site, QString username, QString passw
 
     AccountItem item;
     item.site = site;
-    item.username = username;
-    item.password = password;
+
+    QJsonObject credentials;
+    credentials["username"] = username;
+    credentials["password"] = password;
+
+    QJsonDocument jsonDoc(credentials);
+    QByteArray bytes = jsonDoc.toJson();
+
+    QByteArray enc_creds;
+    CryptoController::EncryptCredentials(this->key, bytes, enc_creds);
+
+    item.credentials = enc_creds;
     m_items.append(item);
     this->save();
 
     emit postItemAppended();
 }
 
-void AccountList::appendItem(AccountItem item, bool save)
+void AccountList::appendItem(AccountItem item)
 {
     emit preItemAppended();
 
     m_items.append(item);
-    if (save)
-        this->save();
+
 
     emit postItemAppended();
 }
@@ -154,4 +153,35 @@ void AccountList::onKeyGenerated(QByteArray key)
 {
     this->key = key;
     this->load();
+}
+
+void AccountList::onCopyToClipboard(int id, int role)
+{
+    QByteArray encrypted_cred = this->m_items.at(id).credentials;
+    QByteArray decrypted_cred;
+
+    CryptoController::DecryptCredentials(this->key, encrypted_cred, decrypted_cred);
+
+    QJsonParseError err;
+    QJsonDocument json_doc = QJsonDocument::fromJson(decrypted_cred, &err);
+
+    if (json_doc.isNull()) {
+        qDebug() <<"Error when parsing JSON:" <<err.errorString();
+    }
+
+    QJsonObject object = json_doc.object();
+    Credentials creds;
+
+    if (object.contains("username") && object["username"].isString())
+        creds.username = object["username"].toString();
+
+    if (object.contains("password") && object["password"].isString())
+        creds.password = object["password"].toString();
+
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    if (role == 1)
+        clipboard->setText(creds.username);
+    else
+        clipboard->setText(creds.password);
 }
