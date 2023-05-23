@@ -1,0 +1,13 @@
+enclave {
+    from "sgx_tstdc.edl" import *;
+
+    trusted {
+        /* define ECALLs here. */
+        public void get([out, size=len]char* buf, size_t len, size_t idx);
+    };
+
+    untrusted {
+        /* define OCALLs here. */
+
+    };
+};
